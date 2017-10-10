@@ -1,0 +1,184 @@
+/* INDEX.PHP */
+* {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: lightskyblue !important;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.mynavbar {
+    background-color: #5f5f5f;
+    color: #f1f1f1;
+    font-size: 17px;
+    letter-spacing: 1px;
+    height: 35px;
+    line-height: 35px;
+    margin: 0;
+}
+
+.mynavbar a {
+    color: #f1f1f1;
+    padding: 0 7px;
+    height: 100%;
+    float: left;
+    display: block;
+}
+
+.mynavbar a:hover, .mynavbar a:active, .mynavbar a:link {
+    text-decoration: none;
+}
+
+.mynavbar a:hover, .mynavbar a:active {
+    color: #f1f1f1;
+    background-color: black;
+}
+
+.form-setup {
+    border: none;
+    width: 20%;
+    padding: 8px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 35px;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #f1f1f1;
+}
+
+.form-setup span {
+    font-weight: normal;
+    font-size: 1em;
+}
+
+.form-setup ol li {
+    display: list-item;
+    list-style-position: inside;
+    list-style-type: decimal;
+}
+
+.form-setup a:hover, .form-setup a:active, .form-setup a:link {
+    text-decoration: none;
+}
+
+.content {
+    border: 1px solid grey;
+    padding: 0;
+    box-sizing: border-box;
+    position: fixed;
+    top: 35px;
+    bottom: 40px;
+    left: 20%;
+    width: 80%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: white;
+    border-top: none;
+}
+
+.content .question {
+    font-family: "Times New Roman", sans-serif;
+    padding-top: 20px;
+}
+
+.content .question hr {
+    width: 100%;
+    height: 1px;
+    background-color: grey;
+    margin: 0;
+}
+
+.content .item {
+    display: table;
+    width: 100%;
+    margin-bottom: 4px;
+    padding: 0 10px;
+}
+
+.content .item p {
+    display: table-cell;
+}
+
+.content .item .answer {
+    width: 20px;
+    vertical-align: top;
+    /*vertical-align: middle;*/
+}
+
+.content .item .title {
+    width: 60px;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.content .item input, .content .item textarea {
+    width: 100%;
+    border: 1px solid;
+    padding: 2px;
+}
+
+.content .item input {
+    min-width: 24px;
+    min-height: 12px;
+}
+
+.content .form-add-submit {
+    background: #017ebe;
+    position: fixed;
+    z-index: 100;
+    bottom: 0;
+    left: 20%;
+    height: 40px;
+    width: 100%;
+    border-color: grey;
+    color: black;
+    vertical-align: middle;
+}
+
+.content .form-add-submit button, .content .form-add-submit a {
+    vertical-align: middle;
+    padding: 0 10px;
+    border: 1px solid;
+    font-weight: bold;
+    /*height: 100%;*/
+    cursor: pointer;
+    line-height: 38px;
+}
+
+.content .form-add-submit a {
+    color: black;
+    text-decoration: none;
+    display: inline-block;
+    background: lightgray;
+    line-height: 38px;
+}
+
+.content .form-add-submit button:hover, .content .form-add-submit a:hover {
+    background: darkgray;
+}
+
+.myalert {
+    margin-left: 10px;
+    list-style-position: inside;
+}
+
+.insert-answer {
+    padding-left: 10px;
+    display: block;
+    margin: 0;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    line-height: 25px;
+    font-weight: 600;
+    height: 25px;
+    background: #e9ebee;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+}
+
+.content .time-container-top {
+    position:fixed;width:100%;background: lightskyblue; height:40px;border-bottom:1px solid grey;font-size:25px;font-weight: bold;font-family: Arial,sans-serif;color: #ffff80;line-height: 40px;padding-left:10px;
+}
