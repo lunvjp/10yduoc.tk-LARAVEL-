@@ -72,6 +72,7 @@
 {{--<script async src='//go.su/e/QA9X'></script>--}}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 <script src="{{asset('js/owl.carousel.min.js')}}"></script>
 @yield('javascript')
 </body>
