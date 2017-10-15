@@ -1,8 +1,3 @@
-{{--
-1. Mới vào hiện danh sách các môn => OK
-2. Ở khung bên phải hiển thị hình ảnh cộng các đề môn đó (Thiết kế giao diện cho khung bên phải hiển thị tất cả các đề: bao gồm tên đề, số người đã làm, số câu)
---}}
-
 @extends('layouts.index')
 @section('title')
     10YDuoc.tk - Cùng nhau làm đề
@@ -148,6 +143,9 @@
 @section('javascript')
     <script>
         $(function(){
+//            $(document).pjax('a[data-subject], a[data-test]','html');
+
+
             $("#seemore-btn").click(function(){
                 $("#seemore").fadeToggle("slow");
             });

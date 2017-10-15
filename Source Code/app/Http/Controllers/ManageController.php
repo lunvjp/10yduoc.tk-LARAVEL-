@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-?>
-    <meta charset="utf-8">
-<?php
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
@@ -19,6 +16,13 @@ use Validator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 class ManageController extends Controller
 {
+    public function updateStartIndex(Request $request, $subject_id, $unit_id, $test_id) {
+        foreach ($request['id'] as $key => $value) {
+            manage_test::where(['tests_id'=>$test_id,'questions_id'=>$value])->update(['index'=> $request['index']+$key]);
+        }
+//        return response()->json(['item' => $item]);
+    }
+
     // Dùng middleware để kiểm tra ở đây
     public function __construct(){
         $this->middleware('auth');
@@ -342,7 +346,7 @@ class ManageController extends Controller
         //
     }
 
-    public function updateQuestions(Request $request,$subject_id, $unit_id,$test_id ) {
+    public function updateQuestions(Request $request,$subject_id, $unit_id,$test_id) {
         // Sắp xếp câu hỏi
         if ( $request->has('index')) {
 //            $this->validate($request, array(
@@ -352,10 +356,6 @@ class ManageController extends Controller
             $data = $request->toArray();
             $indexoftest = $data['index'];
             $check = false;
-//            var_dump(question::find(357));
-//            echo '<hr>';
-//            var_dump(question::where('id',357));
-//            die();
             // Cập nhật đáp án
             foreach($indexoftest as $key => $value) {
                 $answer = htmlspecialchars(ucfirst(trim($data['answer'][$key])));

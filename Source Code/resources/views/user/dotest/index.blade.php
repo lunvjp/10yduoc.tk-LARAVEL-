@@ -97,6 +97,14 @@
         @endforeach
     @endif
 @endsection
+@section('toeic-audio')
+    @if (isset($questions) && $subject_id == 1 && !Session::has('checkDoTest'))
+    <audio id="toeic-audio" class="btn-block" controls style="position: fixed; width: 40%; ">
+        <source src="{{asset('upload/'.$audio)}}">
+    </audio>
+    @endif
+@endsection
+
 @section('work')
     @if (Session::has('checkDoTest'))
         <div style="margin: 10px" class="alert alert-info">
@@ -109,7 +117,7 @@
                     <div class="question {{$value->answer == $value->answerofuser ? 'right' : 'wrong'}}">
                         <div class="item">
                             <p class="title">Câu {{$value->index}}.</p>
-                            <p class="title-content">{{$value->name}}</p>
+                            <p class="title-content listen">{{$value->name}}</p>
                         </div>
 
                         @php
@@ -124,7 +132,7 @@
                             foreach($temp as $key2 => $value2) {
                                 $xhtml .= '<div class="item">
                                     <p class="answer">'.$key2.'.</p>
-                                    <p>' . $value2 . '</p>
+                                    <p class="listen">' . $value2 . '</p>
                                 </div>';
                             }
 
@@ -141,18 +149,28 @@
         @endif
     @endif
 @endsection
-
-
 @section('testOption')
     <div id="dotest" style="display: none">
         <button type="button" id="submit-button">Nộp bài</button>
     </div>
-    @if (!Session::has('checkDoTest'))
+    @if (!Session::has('checkDoTest') && isset($test_id))
     <div id="seetest">
+        <button type="button" id="result-button">Kết quả</button>
         <button type="button" id="notdone-button">Bài chưa làm</button>
         <button type="button" id="wrong-button">Bài làm sai</button>
         <button type="button" id="right-button">Bài làm đúng</button>
         <button type="button" id="facebook-button">Bật/Tắt bình luận</button>
+        @if ($subject_id == 1)
+            <div data-toggle="tooltip" data-placement="top" title="Bài làm luôn luôn được ẩn mỗi khi hiển thị kết quả" style="display: inline; vertical-align: middle;padding: 5px" class="panel checkbox">
+                <label style="font-weight: bold;"><input type="checkbox" id="listen-practice">LUYỆN NGHE</label>
+            </div>
+            <div style="display: none; margin-left: 5px; vertical-align: middle; padding: 5px" class="panel" id="listen-practice-option">
+                <span style="vertical-align: middle;"><input style="width: 17px; height: 17px" type="radio" name="showQuestion" value="false" checked></span>
+                <span style="padding-left: 2px">Ẩn Câu Hỏi</span>
+                <span style="vertical-align: middle;"><input style="width: 17px; height: 17px;margin-left: 4px" type="radio" name="showQuestion" value="true"></span>
+                <span style="padding-left: 2px">Hiện Câu Hỏi</span>
+            </div>
+        @endif
     </div>
     @endif
 @endsection
@@ -161,22 +179,105 @@
     <div id="player">
         <div class="fb-comments" data-href="{{url('/do-test/'.$subject_id.'/'.$test_id)}}" data-width="100%"  data-numposts="15"></div>
     </div>
-    {{--<div id="fb-root"></div>--}}
     @endif
 @endsection
-<div id="fb-root"></div>
+
 @section('javascript')
-    <script>(function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.10&appId=309350989506967";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-    </script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.10&appId=309350989506967";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
 <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
 @if (isset($subject_id))
 <script>
+    //--------------------------------------------------------------
+    // Check TOEIC SUBJECT and User've done
+    @if($subject_id == 1 && !Session::has('checkDoTest'))
+    @if (isset($listen))
+        $("#listen-practice").prop('checked',true);
+        if (!($('form#form-do-more-question').length)) { // Nếu người dùng không phải đang ở Bài Chưa Làm
+            $('#listen-practice-option' + ' input[value="false"]').prop('checked',true);
+            $("#listen-practice-option").css('display','inline');
+            $(".listen").hide();
+            $('.title, .answer').after('<input class="form-control">');
+        }
+    @endif
+    $(function(){
+        var listen_practice = $("#listen-practice");
+
+        $("#questions-container").css('margin-top','32px');
+//        listen_practice.prop('checked',false);
+
+        listen_practice.change(function(){
+            $("#questions").hide();
+            $("#ajax-load").show();
+            $.ajax({
+                url: '{{url('do-test/'.$subject_id.'/practiceListening')}}',
+                type: 'POST',
+                data: {
+                    check: $("#listen-practice:checked").val(),
+                    _token: '{{Session::token()}}'
+                },
+                success: function(data) {
+                    console.log(data);
+                    if ($("#listen-practice:checked").val()) { // BẬT Chế Độ Luyện Nghe
+                        if (!($('form#form-do-more-question').length)) {
+                            $('#listen-practice-option' + ' input[value="false"]').prop('checked',true);
+                            $("#listen-practice-option").css('display','inline');
+                            $(".listen").hide();
+                            $('.title, .answer').after('<input class="form-control">');
+                            // Gọi Ajax lưu vào database là nó muốn luyện nghe mặc định
+                        }
+                    } else { // TẮT Chế Độ Luyện Nghe
+                        $(".listen").fadeIn();
+                        $('#listen-practice-option').hide();
+                        $(".item input.form-control").remove();
+                        // Gọi ajax lưu vào database là nó ko muốn luyện nghe mặc định
+                    }
+                    $("#ajax-load").hide();
+                    $("#questions").show();
+                }
+            });
+
+
+//            if (this.checked) { // BẬT Chế Độ Luyện Nghe
+//                if (!($('form#form-do-more-question').length)) {
+//                    $('#listen-practice-option' + ' input[value="false"]').prop('checked',true);
+//                    $("#listen-practice-option").css('display','inline');
+//                    $(".listen").hide();
+//                    $('.title, .answer').after('<input class="form-control">');
+//                    // Gọi Ajax lưu vào database là nó muốn luyện nghe mặc định
+//                }
+//            } else { // TẮT Chế Độ Luyện Nghe
+//                $(".listen").fadeIn();
+//                $('#listen-practice-option').hide();
+//                $(".item input.form-control").remove();
+//
+//                // Gọi ajax lưu vào database là nó ko muốn luyện nghe mặc định
+//            }
+
+            // Nói chung mỗi khi thay đổi đều gọi ajax, vậy thôi
+//            alert(this.checked);
+
+        });
+
+        $('#listen-practice-option'+ ' input[name=showQuestion]').change(function(){
+            var check = $('#listen-practice-option'+ ' input[name=showQuestion]:checked').val();
+            if (check === 'true') {
+                $('.listen').css({'display':'block','margin':'0'}).fadeIn();
+            } else {
+                $('.listen').hide();
+            }
+        });
+    });
+    @endif
+    $('[data-toggle="tooltip"]').tooltip();
+    //--------------------------------------------------------------
+
     var timeObject = $('#time');
 
     function getDayFromNow(time) {
@@ -185,24 +286,13 @@
 
     timeObject.countdown(getDayFromNow(0))
         .on('update.countdown', function(event) {
-//            var format = '%H:%M:%S';
             var format = '%M:%S';
-//            if(event.offset.totalDays > 0) {
-//                format = '%-d day%!d ' + format;
-//            }
-//            if(event.offset.weeks > 0) {
-//                format = '%-w week%!w ' + format;
-//            }
             $(this).html(event.strftime(format));
         })
         .on('finish.countdown', function(event) {
-//            timeObject.html('Hết giờ');
-
             setTimeout(function(){
                 $("#form-do-test").submit();
             },1000);
-//            $(this).html('This offer has expired!')
-//                .parent().addClass('disabled');
         });
 
     var test_id;
@@ -259,10 +349,11 @@
             });
         });
 
+
+
         $("#notdone-button").click(function(){
             $("#questions").empty();
             $("#ajax-load").show();
-//            alert(test_id);
             $.ajax({
                 {{--url: '{{url('do-test/'.$subject_id.'/'.$test_id)}}', // ok--}}
                 url: '{{url('do-test/'.$subject_id.'/'.$test_id)}}', // ok
@@ -281,30 +372,33 @@
             });
         });
 
+        // Lỗi là do nó gọi 2 hàm cùng 1 lúc, chứ ko phải chờ nội dung được in ra rồi nó check.
+        // Tìm cách biết ko phải dùng callback mà check được hàm nào trước sau
+        $("#result-button").click(function(){
+            loadQuestionDone(null);
+        });
         $("#wrong-button").click(function () {
             loadQuestionDone('wrong');
         });
-//
         $("#right-button").click(function () {
             loadQuestionDone('right');
+        });
+
+        $("#show-button").click(function(){
+            $(".title-content, .question .item p span").fadeToggle();
         });
         var dem=0;
         $("#facebook-button").click(function(){
             dem++;
             if (dem%2 !== 0) {
-                $("#questions-container").animate({
-                    width: '80%'
-                });
+                $("#questions-container").animate({width: '80%'});
                 $("#facebook").animate({left: '100%'});
+                $("#toeic-audio").animate({width: '80%'});
             } else {
-                $("#questions-container").animate({
-                    width: '40%'
-                });
-                $("#facebook").animate({
-                    left: '60%'
-                });
+                $("#questions-container").animate({width: '40%'});
+                $("#facebook").animate({left: '60%'});
+                $("#toeic-audio").animate({width: '40%'});
             }
-
         });
     });
 
@@ -322,12 +416,29 @@
             },
             success: function(data) {
                 $("#questions").html(data.questions);
+                //------------------------------------------------------------------------------
+                // Check Listening Option //
+                @if ($subject_id == 1 && !Session::has('checkDoTest'))
+                if ($("#listen-practice:checked").val()) { // BẬT Chế Độ Luyện Nghe
+                    if (!($('form#form-do-more-question').length)) { // Nếu ko ở trong Bài Chưa Làm mới thực hiện
+                        $('#listen-practice-option' + ' input[value="false"]').prop('checked',true); // Chỉnh mặc định: Ẩn câu hỏi
+                        $("#listen-practice-option").css('display','inline'); // Hiện tùy chọn Show/Hide Questions trong chế độ nghe
+                        $(".listen").hide(); // Ẩn câu hỏi
+                        $('.title, .answer').after('<input class="form-control">'); // Thêm input để luyện vào
+                    }
+                } else { // TẮT Chế Độ Luyện Nghe
+                    $(".listen").fadeIn(); // Hiển thị câu hỏi lên
+                    $('#listen-practice-option').hide(); // Tắt tùy chọn Show/Hide Questions
+                    $(".item input.form-control").remove(); // Loại bỏ các input
+                }
+                @endif
                 $("#ajax-load").hide();
             }
         });
     }
 @endif
     function reloadTestWhenDoingTest() {
+        $("#toeic-audio").remove();
         $("#questions").empty();
         $("#ajax-load").show();
         $("#dotest").show();
@@ -349,9 +460,29 @@
                 $("#time-container").show();
                 $("#questions").html(data.questions);
                 $("#questions-container").css({'margin-top':'40px','width':'80%'}); // Để khoảng trống cho đếm giờ
-                if (!timeObject.text()) timeObject.countdown(getDayFromNow(data.time));
+                var check = false;
+                if (!timeObject.text()) {
+                    @if ($subject_id == 1)
+                    if (!$('#mp3').length) $('.time-container-top').append('<audio id="mp3" style="margin: auto; width: 70%;" controls autoplay>' +
+                        '<source src="{{asset('upload')}}/'+data.link+'"></audio>');
+                    if ($('#mp3').length) {
+                        var audio = document.getElementById('mp3');
+                        audio.oncanplaythrough = function(){
+                            timeObject.countdown(getDayFromNow(data.time));
+                            $("#ajax-load").hide();
+                            check = true;
+                        };
+                        audio.addEventListener("ended", function()
+                        {
+                            $("#form-do-test").submit();
+                        });
+                    }
+                    @else
+                        timeObject.countdown(getDayFromNow(data.time));
+                    @endif
+                }
+                if (!check) $("#ajax-load").hide();
                 $("input[name=testid]").val(test_id);
-                $("#ajax-load").hide();
             }
         });
     }
@@ -379,7 +510,6 @@
                 _token: '{{Session::token()}}'
             },
             success: function(data) {
-                console.log(data);
                 $(temp).hide();
             }
         });

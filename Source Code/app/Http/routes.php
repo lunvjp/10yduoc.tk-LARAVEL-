@@ -1,9 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Auth;
 
-Route::get('test',function(){
-    return view('test');
-});
 //----------------------------------------------------------------------------
 // HOME //
 Route::auth();
@@ -21,11 +18,13 @@ Route::group(['prefix' => 'do-test'],function(){
         Route::post('/','UserController@doTest');
         // Ajax Click Input
         Route::post('doQuestion','UserController@doQuestion');
+        // Ajax Listen Practice Option
+        Route::post('practiceListening','UserController@practiceListening');
         // Show Done Questions Of A Test
         Route::get('{test_id}','UserController@showResults')->name('UserController.showResults')->middleware('checkDoTest');
+//        Route::post('{test_id}/showResults','UserController@showResults');
+        // Ajax Load Not Done Questions
         Route::post('{test_id?}','UserController@doTest')->where('test_id','[\d]*');
-        // Submit When User Finishes Doing Test
-        Route::post('{test_id}','UserController@showResults');
         // Ajax Load True/False Questions
         Route::post('{test_id}/showQuestions','UserController@showQuestions');
     });
@@ -49,10 +48,11 @@ Route::group([ 'prefix' => 'admin'], function () {
                 Route::post('/', 'ManageController@createTest');
 
                 Route::group(['prefix' => '{test_id}'], function () {
-                    Route::get('/', 'ManageController@showQuestions');
+                    Route::get('/', 'ManageController@showQuestions')->name('ManageController.showQuestions');
                     Route::get('/delete', 'ManageController@destroyTest');
                     Route::post('/create','ManageController@createMoreQuestions');
                     Route::post('/','ManageController@updateQuestions');
+                    Route::post('/updateStartIndex','ManageController@updateStartIndex');
                 });
             });
         });

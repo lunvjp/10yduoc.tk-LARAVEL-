@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta property="fb:app_id" content="309350989506967" />
+    <meta property="fb:admins" content="309350989506967">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -41,11 +43,12 @@
 
 <div class="content" style="font-family: Open Sans;font-weight: 600">
     <div id="time-container" style="display: none">
-        <div class="time-container-top">
+        <div class="time-container-top" style="width: 80%;display: flex;" >
             <span id="time"></span>
-            <button id="reload" style="margin-left: 50px; margin-bottom: 6.5px"  class="btn btn-primary"><span style="font-weight: bold;">Tải lại đề thi</span></button>
+            <button id="reload" style="margin: auto" class="btn btn-primary"><span style="font-weight: bold">Tải lại đề thi</span></button>
         </div>
     </div>
+    @yield('toeic-audio')
     <div id="questions-container">
         <div id="ajax-load" style="display: none; width: 105px; margin: auto; margin-top:20px">
             <i class="fa fa-spinner fa-spin" style="font-size: 7em; color: #D9ECFF;"></i>
@@ -57,9 +60,6 @@
     <div id="facebook">
         @yield('facebook')
     </div>
-    {{--<div id="ajax-load" style="display: none; height: 100px; width: 160px; margin: auto; margin-top:20px">--}}
-        {{--<i class="fa fa-spinner fa-spin" style="font-size: 7em; color: #D9ECFF;"></i>--}}
-    {{--</div>--}}
     <div class="form-add-submit" style="position: fixed;">
         @yield('testOption')
         @if (!Auth::check())
@@ -69,10 +69,9 @@
     </div>
 </div>
 @yield('sortoption')
-{{--<script async src='//go.su/e/QA9X'></script>--}}
+<script async src='//go.su/e/QA9X'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 <script src="{{asset('js/owl.carousel.min.js')}}"></script>
 @yield('javascript')
 </body>

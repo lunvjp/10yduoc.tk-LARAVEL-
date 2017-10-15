@@ -31,8 +31,10 @@ class checkDoTest
         if (!$check) {
             $validTest = test::where('id',$request->test_id)->first();
             if (!$validTest) return redirect()->route('index');
-            Session::flash('checkDoTest',$validTest);
+            Session::flash('checkDoTest',$validTest->name);
         }
+
+        // Xuống đây tức là đã làm rồi
 
         return $next($request);
     }

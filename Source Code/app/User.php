@@ -34,5 +34,9 @@ class User extends Authenticatable
     public function questions() {
         return $this->belongsToMany('App\question','do_questions')->withTimestamps()->withPivot('check','answerofuser');
     }
+
+    public function settings() {
+        return $this->belongsToMany('App\setting','users_has_settings','users_id','settings_id')->withTimestamps();
+    }
 }
 

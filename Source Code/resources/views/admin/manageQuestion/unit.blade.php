@@ -57,6 +57,32 @@
 
             </div>
         </div>
+
+        <div id="update-index-test" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Thông báo</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            {{csrf_field()}}
+                            <div class="form-group">
+                                <label>Chỉ số câu hỏi bắt đầu từ</label>
+                                <input class="form-control" type="number" name="start-index" required>
+                            </div>
+                            <button type="submit"></button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="update-start-index" class="btn btn-success">Lưu</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     @endif
 @endsection
 
@@ -108,12 +134,11 @@
     @endif
     <div id="listquestion">
         @if (isset($questions))
-            <form method="post" name="update-form" id="update-form"
-                  action="{{url('/admin/manageQuestion/'.$subject_id.'/'.$unit_id.'/'.$test_id)}}">
+            <form method="post" name="update-form" id="update-form" action="{{url('/admin/manageQuestion/'.$subject_id.'/'.$unit_id.'/'.$test_id)}}">
                 {{ csrf_field() }}
                 {{--<ul id="sortable">--}}
                 @foreach($questions as $question)
-                    <div class='question' style='padding-left: 10px'>
+                    <div class='question'>
                         <input type="hidden" name='id[]' value="{{$question->id}}">
                         <div class='item'>
                             <p class='title'>Câu {{$question->pivot->index}}</p>
@@ -345,13 +370,11 @@
 @section('testOption')
     <button type="button" id="add-button">Thêm đề</button>
     <button type="button" id="add-question-button">Thêm câu hỏi</button>
-    <button type="button" data-toggle="modal" data-target="#sortquestion" id="sort-question-button">Sắp xếp/Xóa câu hỏi
-    </button>
+    <button type="button" data-toggle="modal" data-target="#sortquestion" id="sort-question-button">Sắp xếp/Xóa câu hỏi</button>
     <button type="button" id="update-button">Cập nhật đề</button>
+    <button data-toggle="modal" data-target="#update-index-test">Cập nhật chỉ số câu</button>
     <a type="button" id="delete-button" data-toggle="modal" data-target="#myModal">Xóa đề</a>
 @endsection
-
-
 @section('javascript')
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -437,6 +460,25 @@
                     window.location = "{{url('/admin/manageQuestion/'. $subject_id .'/'.$unit_id .'/'.$test_id.'/delete')}}";
                 @endif
             });
+            @if (isset($test_id))
+            $("#update-start-index").click(function(){
+                var index = $('input[name=start-index]').val();
+                var listid = $('#update-form '+ 'input[name="id[]"]').map(function(){return $(this).val();}).get();
+                $.ajax({
+                    url: '{{url('/admin/manageQuestion/'.$subject_id .'/'.$unit_id .'/'.$test_id.'/updateStartIndex')}}',
+                    type: 'post',
+                    data: {
+                        index: index,
+                        id: listid,
+                        _token: '{{Session::token()}}'
+                    },
+                    success: function (data) {
+//                        console.log(data);
+                        location.reload();
+                    }
+                });
+            });
+            @endif
 //            $("#sort-question-button").click(function(){
 //
 //            });

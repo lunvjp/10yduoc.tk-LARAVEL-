@@ -11,19 +11,19 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- Schema mydb
 -- -----------------------------------------------------
 -- -----------------------------------------------------
--- Schema u868218645_quiz
+-- Schema test
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema u868218645_quiz
+-- Schema test
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `u868218645_quiz` DEFAULT CHARACTER SET latin1 ;
-USE `u868218645_quiz` ;
+CREATE SCHEMA IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 ;
+USE `test` ;
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`subjects`
+-- Table `test`.`subjects`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`subjects` (
+CREATE TABLE IF NOT EXISTS `test`.`subjects` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -36,9 +36,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`units`
+-- Table `test`.`units`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`units` (
+CREATE TABLE IF NOT EXISTS `test`.`units` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`units` (
   INDEX `units_subjects_id_foreign` (`subjects_id` ASC),
   CONSTRAINT `units_subjects_id_foreign`
     FOREIGN KEY (`subjects_id`)
-    REFERENCES `u868218645_quiz`.`subjects` (`id`))
+    REFERENCES `test`.`subjects` (`id`))
 
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8
@@ -56,9 +56,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`questions`
+-- Table `test`.`questions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`questions` (
+CREATE TABLE IF NOT EXISTS `test`.`questions` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(1000) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `a` VARCHAR(1000) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`questions` (
   INDEX `questions_units_id_foreign` (`units_id` ASC),
   CONSTRAINT `questions_units_id_foreign`
     FOREIGN KEY (`units_id`)
-    REFERENCES `u868218645_quiz`.`units` (`id`))
+    REFERENCES `test`.`units` (`id`))
 
 AUTO_INCREMENT = 1228
 DEFAULT CHARACTER SET = utf8
@@ -85,9 +85,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`tests`
+-- Table `test`.`tests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`tests` (
+CREATE TABLE IF NOT EXISTS `test`.`tests` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `time` INT(11) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`tests` (
   INDEX `tests_units_id_foreign` (`units_id` ASC),
   CONSTRAINT `tests_units_id_foreign`
     FOREIGN KEY (`units_id`)
-    REFERENCES `u868218645_quiz`.`units` (`id`))
+    REFERENCES `test`.`units` (`id`))
 
 AUTO_INCREMENT = 42
 DEFAULT CHARACTER SET = utf8
@@ -107,9 +107,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`users`
+-- Table `test`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`users` (
+CREATE TABLE IF NOT EXISTS `test`.`users` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `oauth_provider` ENUM('', 'facebook', 'google', 'twitter') CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `oauth_uid` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
@@ -134,9 +134,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`do_questions`
+-- Table `test`.`do_questions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`do_questions` (
+CREATE TABLE IF NOT EXISTS `test`.`do_questions` (
   `users_id` INT(10) UNSIGNED NOT NULL,
   `questions_id` INT(10) UNSIGNED NOT NULL,
   `tests_id` INT(10) UNSIGNED NOT NULL,
@@ -149,22 +149,22 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`do_questions` (
   INDEX `do_questions_tests_id_foreign` (`tests_id` ASC),
   CONSTRAINT `do_questions_questions_id_foreign`
     FOREIGN KEY (`questions_id`)
-    REFERENCES `u868218645_quiz`.`questions` (`id`),
+    REFERENCES `test`.`questions` (`id`),
   CONSTRAINT `do_questions_tests_id_foreign`
     FOREIGN KEY (`tests_id`)
-    REFERENCES `u868218645_quiz`.`tests` (`id`),
+    REFERENCES `test`.`tests` (`id`),
   CONSTRAINT `do_questions_users_id_foreign`
     FOREIGN KEY (`users_id`)
-    REFERENCES `u868218645_quiz`.`users` (`id`))
+    REFERENCES `test`.`users` (`id`))
 
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`do_tests`
+-- Table `test`.`do_tests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`do_tests` (
+CREATE TABLE IF NOT EXISTS `test`.`do_tests` (
   `users_id` INT(10) UNSIGNED NOT NULL,
   `tests_id` INT(10) UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -173,19 +173,19 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`do_tests` (
   INDEX `do_tests_tests_id_foreign` (`tests_id` ASC),
   CONSTRAINT `do_tests_tests_id_foreign`
     FOREIGN KEY (`tests_id`)
-    REFERENCES `u868218645_quiz`.`tests` (`id`),
+    REFERENCES `test`.`tests` (`id`),
   CONSTRAINT `do_tests_users_id_foreign`
     FOREIGN KEY (`users_id`)
-    REFERENCES `u868218645_quiz`.`users` (`id`))
+    REFERENCES `test`.`users` (`id`))
 
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`manage_tests`
+-- Table `test`.`manage_tests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`manage_tests` (
+CREATE TABLE IF NOT EXISTS `test`.`manage_tests` (
   `tests_id` INT(10) UNSIGNED NOT NULL,
   `questions_id` INT(10) UNSIGNED NOT NULL,
   `index` INT(11) NOT NULL,
@@ -196,19 +196,19 @@ CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`manage_tests` (
   INDEX `manage_tests_questions_id_foreign` (`questions_id` ASC),
   CONSTRAINT `manage_tests_questions_id_foreign`
     FOREIGN KEY (`questions_id`)
-    REFERENCES `u868218645_quiz`.`questions` (`id`),
+    REFERENCES `test`.`questions` (`id`),
   CONSTRAINT `manage_tests_tests_id_foreign`
     FOREIGN KEY (`tests_id`)
-    REFERENCES `u868218645_quiz`.`tests` (`id`))
+    REFERENCES `test`.`tests` (`id`))
 
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`migrations`
+-- Table `test`.`migrations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`migrations` (
+CREATE TABLE IF NOT EXISTS `test`.`migrations` (
   `migration` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `batch` INT(11) NOT NULL)
 
@@ -217,9 +217,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`password_resets`
+-- Table `test`.`password_resets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`password_resets` (
+CREATE TABLE IF NOT EXISTS `test`.`password_resets` (
   `email` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `token` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -231,9 +231,9 @@ COLLATE = utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
--- Table `u868218645_quiz`.`tien_questions`
+-- Table `test`.`tien_questions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `u868218645_quiz`.`tien_questions` (
+CREATE TABLE IF NOT EXISTS `test`.`tien_questions` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `answer` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,
   `wh` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL,

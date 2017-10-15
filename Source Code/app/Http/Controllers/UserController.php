@@ -10,10 +10,27 @@ use App\test;
 use App\do_test;
 use App\do_question;
 use App\question;
+use App\users_has_settings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
+    public function practiceListening(Request $request) {
+        if ($request['check']) { // Vào chế độ luyện nghe
+            $user_settings = new users_has_settings;
+            $user_settings->settings_id = 1;
+            $user_settings->users_id = Auth::id();
+            $user_settings->save();
+        } else { // Nếu $request['check'] == false -> Xóa trong bảng cài đặt
+            DB::table('users_has_settings')->where([
+                ['users_id' , Auth::id()],
+                ['settings_id' , 1]
+            ])->delete();
+        }
+
+//        return response()->json(['check' => gettype($request['check'])]);
+    }
+
     // Ajax Click Input
     public function doQuestion(Request $request) {
         $do_question = new do_question;
@@ -68,7 +85,7 @@ class UserController extends Controller
                             <input type="hidden" name="_token" value='.csrf_token().'>';
                 } else
                 {
-                    $content = '<form action="./'.$subject_id.'/'.$request['test_id'].'" method="post" name="form-do-test" id="form-do-test">
+                    $content = '<form action="'.url('/do-test/'.$subject_id.'/'.$request['test_id']).'" method="post" name="form-do-test" id="form-do-test">
                         <input type="hidden" name="testid">
                         <input type="hidden" name="_token" value='.csrf_token().'>';
                 }
@@ -82,18 +99,38 @@ class UserController extends Controller
                     if ($value->e) $item['E'] = $value->e;
                     if ($value->f) $item['F'] = $value->f;
 
-                    $temp = '<div class="question" id="'.$value->id.'">
-                    <div class="item">
-                        <p class="title">Câu ' . $value->index . '.</p>
-                        <p class="title-content">' . $value->name . '</p>
-                    </div>';
-                    foreach($item as $i => $val) {
-                        $temp .= '<div class="item">
-                        <p class="answer">'.$i.'.</p>
-                        <p style="width:2%;vertical-align: top;"><input class="'.$value->id.'" value="'.strtolower($i).'" type="radio" name="'.$value->id.'"></p>
-                        <p style="padding-left:10px;"><span>'.$val.'</span></p>
-                    </div>';
+                    # Check Subject
+                    # Nếu type != 'more' và id = 1 (Toiec)
+                    if ( $subject_id == 1) {
+                        $temp = '<div class="question" id="'.$value->id.'">
+                                <div class="item">
+                                    <p class="title">Câu ' . $value->index . '.</p>
+                                    <p class="title-content" style="display: none">' . $value->name . '</p>
+                                </div>';
+                        foreach($item as $i => $val) {
+                            $temp .= '<div class="item">
+                                        <p class="answer">'.$i.'.</p>
+                                        <p style="width:2%;vertical-align: top;"><input class="'.$value->id.'" value="'.strtolower($i).'" type="radio" name="'.$value->id.'"></p>
+                                        <p style="padding-left:10px;"><span style="display: none;">'.$val.'</span></p>
+                                    </div>';
+                        }
                     }
+                    # END TOEIC
+                    else {
+                        $temp = '<div class="question" id="'.$value->id.'">
+                                    <div class="item">
+                                        <p class="title">Câu ' . $value->index . '.</p>
+                                        <p class="title-content">' . $value->name . '</p>
+                                    </div>';
+                            foreach($item as $i => $val) {
+                                $temp .= '<div class="item">
+                            <p class="answer">'.$i.'.</p>
+                            <p style="width:2%;vertical-align: top;"><input class="'.$value->id.'" value="'.strtolower($i).'" type="radio" name="'.$value->id.'"></p>
+                            <p style="padding-left:10px;"><span>'.$val.'</span></p>
+                        </div>';
+                        }
+                    }
+                    # END Check Subject
                     if ($request['type']) {
                         $temp .= '<input class="key" type="hidden" disabled value="'.$value->answer.'">';
                         $temp .= '<p class="insert-answer" style="display:none"></p>';
@@ -107,6 +144,10 @@ class UserController extends Controller
             }
             else $content = '<div style="margin: 10px;" class="alert alert-success"><strong>Success!</strong> Đã làm hết đề</div>';
 
+            if ($subject_id == 1) {
+                $test = test::find($request['test_id']);
+                return response()->json(['questions' => $content,'time' => $test->time,'link' => $test->link]);
+            }
             return response()->json(['questions' => $content,'time' => test::find($request['test_id'])->time]);
         }
         return redirect()->route('UserController.showResults',[$subject_id,$request->testid]);
@@ -157,19 +198,20 @@ class UserController extends Controller
             ->get();
     }
 
-    // Show True/False Questions
+    // Show Done/True/False Questions
     public function showQuestions(Request $request) {
-        if ($request->has('type')) {
+//        if ($request->has('type')) {
             $questions = $this->loadQuestionDone($request['test_id'],$request['type']);
             $html = '';
 
             if (!empty($questions)) {
                 foreach ($questions as $key => $value) {
                     $check = $value->answer == $value->answerofuser;
+                    $listen = $request['subject_id'] == 1;
                     $html .= '<div class="question '.($check ? "right" : "wrong").'">
                             <div class="item">
                                 <p class="title">Câu '.$value->index.'.</p>
-                                <p class="title-content">'.$value->name.'</p>
+                                <p class="title-content '.($listen ? 'listen' : '').'">'.$value->name.'</p>
                             </div>';
 
                     $temp['A'] = $value->a;
@@ -183,27 +225,36 @@ class UserController extends Controller
 
                     foreach($temp as $key2 => $value2) {
                         $html .= '  <div class="item">
-                                    <p class="answer">'.$key2.'.</p>
-                                    <p>' . $value2 . '</p>
-                                </div>';
+                                        <p class="answer">'.$key2.'.</p>
+                                        <p '.($listen ? 'class="listen"' : '').' >' . $value2 . '</p>
+                                    </div>';
                     }
 
                     $html .= '<p class="insert-answer" style="color: '.($check ? 'blue' : 'red').'">'.$value->answer.' - Trả lời '.$value->answerofuser.'</p>
                             </div>';
                 }
             } else {
-                $html = '<div style="margin: 10px;" class="alert alert-info"><strong>Thông báo! </strong>Không có bài làm '.($request['type'] == 'right' ? 'đúng' : 'sai').'</div>';
+                if (!$request->has('type'))
+                    $html = '<div style="margin: 10px" class="alert alert-info">
+                                <strong>Thông báo!</strong> Bạn chưa làm câu nào trong đề này.
+                            </div>';
+                else $html = '<div style="margin: 10px;" class="alert alert-info"><strong>Thông báo! </strong>Không có bài làm '.($request['type'] == 'right' ? 'đúng' : 'sai').'</div>';
             }
-
+            // }
             return response()->json(['questions' => $html]);
-        }
     }
 
     // Show Result Of A Test (default: when user click a test, after submit form do test)
     public function showResults($subject_id,$test_id) {
         $listTest = $this->loadListTest($subject_id);
         $questions = $this->loadQuestionDone($test_id);
-
+        if ($subject_id == 1 ) { // TOEIC
+            $listen = users_has_settings::where([
+                ['users_id',Auth::id()],
+                ['settings_id',1] // 1 = Listen Toeic Option
+            ])->first();
+            return view('user.dotest.index', ['subject_id' => $subject_id, 'test_id' => $test_id, 'audio' => test::find($test_id)->link,'listTest' => $listTest, 'questions' => $questions, 'listen' => $listen]);
+        }
         return view('user.dotest.index',['subject_id' => $subject_id,'test_id' => $test_id,'listTest' => $listTest,'questions' => $questions]);
     }
 
