@@ -93,7 +93,7 @@
         {{--</div>--}}
         {{--<div class="form-group">--}}
             <div class="col-sm-12" style="text-align: center">
-                <a href="{{url('/auth/facebook')}}" class="btn-socialite btn btn-primary">
+                <a href="javascript:void(0);" onclick="fbLogin()" class="btn-socialite btn btn-primary">
                     <i class="fa fa-facebook fa-lg"></i> Facebook Login</a>
                 <a href="{{url('/auth/google')}}" class="btn-socialite btn btn-danger">
                     <i class="fa fa-google-plus fa-lg" aria-hidden="true"></i> Google Login</a>
@@ -185,42 +185,51 @@
     @endif
 @endsection
 @section('javascript')
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
     <script>
-        function onSuccess(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId());
-            console.log('Full Name: ' + profile.getName());
-            console.log('Given Name: ' + profile.getGivenName());
-            console.log('Family Name: ' + profile.getFamilyName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail());
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '309350989506967', // FB App ID 503740856637847 lunvjp@gmail.com
+                cookie: true,  // enable cookies to allow the server to access the session
+                xfbml: true,  // parse social plugins on this page
+                version: 'v2.8' // use graph api version 2.8
+            });
+        };
 
-            $.ajax({
-                url: '',
-                type: 'post',
-                data: {
-                    profile: profile,
-                },
-                success: function() {
-                    alert('Login Successfully!');
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+//        js.src = "//connect.facebook.net/vi_VN/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function fbLogin() {
+            FB.login(function (response) {
+                if (response.authResponse) { // Đăng nhập thành công ở ngay đây rồi
+                    getFbUserData();
                 }
-            });
+            }, {scope: 'public_profile,email'});
+        }
 
+        function getFbUserData() {
+            FB.api('/me', {locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture'},
+                function (response) {
+                    // Save user data
+                    saveUserData(response);
+                    // $("#form-fade").submit();
+                });
         }
-        function onFailure(error) {
-            console.log(error);
-        }
-        function renderButton() {
-            gapi.signin2.render('my-signin2', {
-                'scope': 'profile email',
-                'width': 240,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSuccess,
-                'onfailure': onFailure
-            });
+
+        function saveUserData(userData) {
+            $.post('{{url('facebook')}}',
+                {oauth_provider: 'facebook', _token: '{{Session::token()}}',userData: JSON.stringify(userData)},
+                function (data) {
+                    // $("#account").html(data);
+                    window.location.replace('/do-test');
+                    // return true;
+                });
         }
 
         $(function(){

@@ -39,7 +39,7 @@
             @endif
             <a href='{{url('/logout')}}'>Đăng xuất</a>
             <a style="pointer-events: none">Chào {{Auth::user()->name}}</a>
-            <a style='padding:0;vertical-align: top;height: 35px;'><img src="{{Auth::user()->picture}}"></a>
+            <a style='padding:0;vertical-align: top;height: 35px;'><img style="height: 100%;vertical-align: top;" src="{{Auth::user()->picture}}"></a>
         @endif
     </div>
 </div>

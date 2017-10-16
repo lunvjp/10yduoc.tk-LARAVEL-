@@ -192,8 +192,8 @@
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
 <script src="{{asset('js/jquery.countdown.min.js')}}"></script>
-@if (isset($subject_id))
 <script>
+@if (isset($subject_id))
     //--------------------------------------------------------------
     // Check TOEIC SUBJECT and User've done
     @if($subject_id == 1 && !Session::has('checkDoTest'))

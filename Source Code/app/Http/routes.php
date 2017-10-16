@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('auth/{provider}', 'Auth\AuthController@redirectToProvider');
 Route::get('auth/{provider}/callback', 'Auth\AuthController@handleProviderCallback');
+Route::post('facebook','Auth\AuthController@loginFacebook');
 //----------------------------------------------------------------------------
 // HOME //
 Route::auth();

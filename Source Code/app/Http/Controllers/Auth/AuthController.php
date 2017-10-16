@@ -8,6 +8,7 @@ use Socialite;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -16,6 +17,34 @@ class AuthController extends Controller
      *
      * @return Response
      */
+    public function loginFacebook(Request $request) {
+        //Convert JSON data into PHP variable
+        $userData = json_decode($request['userData']);
+
+        $user = User::where([
+            ['email', $userData->email],
+            ['oauth_provider', $request['oauth_provider']],
+        ])->first();
+
+        if (!$user) {
+            $user = new User;
+            $user->email = $userData->email;
+            $user->oauth_uid = $userData->id;
+            $user->first_name = $userData->first_name;
+            $user->last_name = $userData->last_name;
+            $user->name = $userData->first_name.' '.$userData->last_name;
+            $user->gender = $userData->gender;
+            $user->locale = $userData->locale;
+            $user->picture = $userData->picture->data->url;
+            $user->link = $userData->link;
+            $user->oauth_provider = $request['oauth_provider'];
+            $user->save();
+        }
+
+        Auth()->login($user);
+//        return redirect('/do-test');
+    }
+
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
