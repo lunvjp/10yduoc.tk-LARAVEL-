@@ -36,6 +36,15 @@
         .content .item-question .test-about .test-about-item {
             margin-right:10px
         }
+
+        @media only screen and (max-width: 1140px) {
+            .btn-socialite {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+
+
     </style>
 @endsection
 @section('listtest')
@@ -74,14 +83,22 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-10 col-md-offset-2">
+        {{--<div class="form-group">--}}
+            <div class="col-sm-12" style="text-align: center;margin-bottom: 10px">
                 <button type="submit" class="btn btn-primary">
                     <i class="fa fa-btn fa-sign-in"></i> Đăng nhập
                 </button>
                 <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
             </div>
-        </div>
+        {{--</div>--}}
+        {{--<div class="form-group">--}}
+            <div class="col-sm-12" style="text-align: center">
+                <a href="{{url('/auth/facebook')}}" class="btn-socialite btn btn-primary">
+                    <i class="fa fa-facebook fa-lg"></i> Facebook Login</a>
+                <a href="{{url('/auth/google')}}" class="btn-socialite btn btn-danger">
+                    <i class="fa fa-google-plus fa-lg" aria-hidden="true"></i> Google Login</a>
+            </div>
+        {{--</div>--}}
     </form>
 @endsection
 
@@ -168,7 +185,44 @@
     @endif
 @endsection
 @section('javascript')
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
     <script>
+        function onSuccess(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId());
+            console.log('Full Name: ' + profile.getName());
+            console.log('Given Name: ' + profile.getGivenName());
+            console.log('Family Name: ' + profile.getFamilyName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
+
+            $.ajax({
+                url: '',
+                type: 'post',
+                data: {
+                    profile: profile,
+                },
+                success: function() {
+                    alert('Login Successfully!');
+                }
+            });
+
+        }
+        function onFailure(error) {
+            console.log(error);
+        }
+        function renderButton() {
+            gapi.signin2.render('my-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure
+            });
+        }
+
         $(function(){
             $("#seemore-btn").click(function(){
                 $("#seemore").fadeToggle("slow");

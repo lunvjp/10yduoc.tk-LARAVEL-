@@ -7,13 +7,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta property="fb:app_id" content="309350989506967" />
     <meta property="fb:admins" content="309350989506967">
+    <meta name="google-signin-client_id" content="308122676345-ks9bl51324cu0dmctboccfrokhlj6e60.apps.googleusercontent.com">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:100,200,300,400,500,600,700&amp;subset=latin,vietnamese"/>
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
-
+    <style>
+        @media only screen and (max-width: 800px) {
+            .form-setup {
+                /*display: none;*/
+            }
+        }
+    </style>
     {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>--}}
     @yield('css')
 </head>
@@ -32,7 +39,7 @@
             @endif
             <a href='{{url('/logout')}}'>Đăng xuất</a>
             <a style="pointer-events: none">Chào {{Auth::user()->name}}</a>
-            <a style='padding:0'><img src="{{Auth::user()->picture}}"></a>
+            <a style='padding:0;vertical-align: top;height: 35px;'><img src="{{Auth::user()->picture}}"></a>
         @endif
     </div>
 </div>
@@ -69,7 +76,8 @@
     </div>
 </div>
 @yield('sortoption')
-<script async src='//go.su/e/QA9X'></script>
+{{--<script async src='//go.su/e/QA9X'></script>--}}
+{{--<script src="https://apis.google.com/js/platform.js" async defer></script>--}}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="{{asset('js/owl.carousel.min.js')}}"></script>

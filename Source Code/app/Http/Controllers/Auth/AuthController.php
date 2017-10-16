@@ -4,12 +4,60 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use Validator;
+use Socialite;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
 class AuthController extends Controller
 {
+    /**
+     * Redirect the user to the GitHub authentication page.
+     *
+     * @return Response
+     */
+    public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    /**
+     * Obtain the user information from GitHub.
+     *
+     * @return Response
+     */
+    public function handleProviderCallback($provider)
+    {
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+        } catch(\Exception $e) {
+            return redirect('/');
+        }
+
+        // Kiểm tra tài khoản đó đã tồn tại trong bảng User hay chưa
+//        $user = User::firstOrCreate(
+//            ['email' => $socialUser->getEmail()],
+//            ['oauth_provider' => 'facebook']
+//        );
+        $user = User::where([
+            ['email', $socialUser->getEmail()],
+            ['oauth_provider', $provider],
+        ])->first();
+
+        if (!$user) {
+            $user = new User;
+            $user->email = $socialUser->getEmail();
+            $user->oauth_uid = $socialUser->getId();
+            $user->name = $socialUser->getName();
+            $user->picture = $socialUser->getAvatar();
+            $user->oauth_provider = $provider;
+            $user->save();
+        }
+
+        Auth()->login($user);
+        return redirect('/do-test');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -38,7 +86,6 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
-
     }
 
     /**
