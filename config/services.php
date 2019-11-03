@@ -43,7 +43,7 @@ return [
 
     'google' => [
         'client_id' => '308122676345-ks9bl51324cu0dmctboccfrokhlj6e60.apps.googleusercontent.com',
-        'client_secret' => 'fAqp01rt5Q3709I0ETMBJ4i7',
+        'client_secret' => 'izN_8F0RyB3M1uGBBXt25YOd',
         'redirect' => '/auth/google/callback',
     ],
 

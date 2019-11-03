@@ -31,7 +31,7 @@
 <div class="mynavbar">
     <a href="{{url('')}}" title="Home"><i class="fa fa-home" style="line-height: 35px;" aria-hidden="true"></i></a>
     <a href="{{url('/do-test/1')}}" title="Làm Đề Toiec">TOEIC</a>
-    <a href="{{url('/do-test/2')}}" title="Làm Đề Giải Phẫu">GIẢI PHẪU</a>
+<!--    <a href="{{url('/do-test/2')}}" title="Làm Đề Giải Phẫu">GIẢI PHẪU</a>-->
     <div id="account" style="float: right;margin-right:10px;">
         @if(Auth::check())
             @if (Auth::user()->email == 'momabz6@gmail.com')

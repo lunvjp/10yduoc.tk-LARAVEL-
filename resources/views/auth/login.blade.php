@@ -83,21 +83,17 @@
             </div>
         </div>
 
-        {{--<div class="form-group">--}}
-            <div class="col-sm-12" style="text-align: center;margin-bottom: 10px">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-btn fa-sign-in"></i> Đăng nhập
-                </button>
-                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
-            </div>
-        {{--</div>--}}
-        {{--<div class="form-group">--}}
-            <div class="col-sm-12" style="text-align: center">
-                <a href="javascript:void(0);" onclick="fbLogin()" class="btn-socialite btn btn-primary">
-                    <i class="fa fa-facebook fa-lg"></i> Facebook Login</a>
-                <a href="{{url('/auth/google')}}" class="btn-socialite btn btn-danger">
-                    <i class="fa fa-google-plus fa-lg" aria-hidden="true"></i> Google Login</a>
-            </div>
+        <div class="col-sm-12" style="text-align: center;margin-bottom: 10px">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-btn fa-sign-in"></i> Đăng nhập
+            </button>
+            <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+        </div>
+        {{--<div class="col-sm-12" style="text-align: center">--}}
+            {{--<a href="javascript:void(0);" onclick="fbLogin()" class="btn-socialite btn btn-primary">--}}
+                {{--<i class="fa fa-facebook fa-lg"></i> Facebook Login</a>--}}
+            {{--<a href="{{url('/auth/google')}}" class="btn-socialite btn btn-danger">--}}
+                {{--<i class="fa fa-google-plus fa-lg" aria-hidden="true"></i> Google Login</a>--}}
         {{--</div>--}}
     </form>
 @endsection

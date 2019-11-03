@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'vtp@lunvjp.com', 'name' => 'LunVjp'],
+    'from' => ['address' => 'noreply@youtalk.com', 'name' => 'YouTalk Team'],
 
     /*
     |--------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCountToTestsTable extends Migration
+class AddDeletedAtToManageTestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,8 @@ class AddCountToTestsTable extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('tests',function($table){
-            $table->integer('count')->after('time');
+        Schema::table('manage_tests', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -25,9 +24,8 @@ class AddCountToTestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('tests', function($table)
-        {
-            $table->dropColumn('count');
+        Schema::table('manage_tests', function (Blueprint $table) {
+            //
         });
     }
 }

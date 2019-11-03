@@ -1,6 +1,7 @@
 @extends('layouts.index')
 @section('title')
-    10YDuoc.tk - Cùng nhau làm đề
+    {{--10YDuoc.tk - Cùng nhau làm đề--}}
+    Get English Better
 @endsection
 @section('css')
     <style>
@@ -44,7 +45,9 @@
 @section('listtest')
     @if (isset($subjects))
         @foreach ($subjects as $subject)
+            @if ($subject->id == 1)
             <a class="btn btn-default" href="{{url('/do-test/'.$subject->id)}}" style="text-align: left; display: block;margin-bottom:7px">{{ $subject->name }}</a>
+            @endif
         @endforeach
     @endif
 @endsection
